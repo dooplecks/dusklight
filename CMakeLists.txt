@@ -177,6 +177,7 @@ option(DUSK_ENABLE_UPDATE_CHECKER "Enable update checking support" ON)
 option(DUSK_ENABLE_SENTRY_NATIVE "Enable sentry-native crash reporting support" OFF)
 option(DUSK_PACKAGE_INSTALL "Install Dusklight with a Linux-native file structure" OFF)
 option(DUSK_GFX_DEBUG_GROUPS "Report debug groups to the native graphics API" ${DUSK_GFX_DEBUG_GROUPS_DEFAULT})
+option(DUSK_ENABLE_LUA "Enable Lua support" ON)
 set(DUSK_SENTRY_DSN "" CACHE STRING "Sentry DSN")
 set(DUSK_SENTRY_ENVIRONMENT "development" CACHE STRING "Sentry environment")
 
@@ -327,6 +328,36 @@ if (DUSK_ENABLE_SENTRY_NATIVE)
     endif ()
 endif ()
 
+if (DUSK_ENABLE_LUA)
+    message(STATUS "dusklight: Fetching Lua and sol2")
+
+    FetchContent_Declare(lua
+        GIT_REPOSITORY https://gitlab.com/codelibre/lua/lua-cmake.git
+        GIT_TAG 30120c2a7430b8e5f02a8ff5fa0a02e92ca4050d
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        GIT_SUBMODULES_RECURSE TRUE
+    )
+
+    FetchContent_Declare(sol2
+        GIT_REPOSITORY https://github.com/halx99/sol2.git
+        GIT_TAG 16a9fabb7ae525d644d3343f15b1de39c8865ecd
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+        GIT_SUBMODULES_RECURSE TRUE
+    )
+    
+    if (NOT lua_POPULATED)
+        FetchContent_Populate(lua)
+        add_subdirectory(${lua_SOURCE_DIR} ${lua_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif ()
+
+    if (NOT sol2_POPULATED)
+        FetchContent_Populate(sol2)
+        add_subdirectory(${sol2_SOURCE_DIR} ${sol2_BINARY_DIR} EXCLUDE_FROM_ALL)
+    endif ()
+endif ()
+
 # Use signed char on ARM to match the original game (and x86)
 string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _arch)
 if(_arch MATCHES "^(arm|aarch64)" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
@@ -383,6 +414,10 @@ set(GAME_LIBS aurora::core aurora::gx aurora::gd aurora::si aurora::vi aurora::p
 if (DUSK_ENABLE_SENTRY_NATIVE)
     list(APPEND GAME_LIBS sentry)
     list(APPEND GAME_COMPILE_DEFS DUSK_ENABLE_SENTRY_NATIVE=1 SENTRY_BUILD_STATIC=1)
+endif ()
+
+if (DUSK_ENABLE_LUA)
+    list(APPEND GAME_LIBS lua_library sol2)
 endif ()
 
 if (WIN32)

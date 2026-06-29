@@ -19,6 +19,7 @@
 #include "d/d_meter2_info.h"
 #include "d/d_msg_object.h"
 #include "d/d_save_HIO.h"
+#include "dusk/live_bg.hpp"
 #include "f_op/f_op_draw_iter.h"
 #include "f_op/f_op_msg_mng.h"
 #include "f_op/f_op_overlap_mng.h"
@@ -836,6 +837,12 @@ static int dScnPly_IsDelete(dScnPly_c i_this) {
 static int dScnPly_Delete(dScnPly_c* i_this) {
     UNUSED(i_this);
 
+    #ifdef TARGET_PC
+    if (fpcM_GetName(i_this) == fpcNm_OPENING_SCENE_e) {
+        dusk::live_bg::deactivate();
+    }
+    #endif
+
     #if VERSION == VERSION_SHIELD_DEBUG
     for (int i = 0; i < 32; i++) {
         char* bank = dStage_roomControl_c::getArcBank(i);
@@ -1480,6 +1487,8 @@ static int phase_4(dScnPly_c* i_this) {
         dMeter2Info_setSword(dItemNo_SWORD_e, false);
         dMeter2Info_setShield(dItemNo_HYLIA_SHIELD_e, false);
         dComIfGs_onEventBit(0x0601);  // Epona Tamed
+
+        IF_DUSK(dusk::live_bg::run_scene_created_hook());
     }
 
     dMpath_c::create();

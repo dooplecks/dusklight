@@ -1444,6 +1444,7 @@ set(DUSK_FILES
         src/dusk/http/http.hpp
         src/dusk/io.cpp
         src/dusk/layout.cpp
+        src/dusk/live_bg.cpp
         src/dusk/logging.cpp
         src/dusk/settings.cpp
         src/dusk/speedrun.cpp

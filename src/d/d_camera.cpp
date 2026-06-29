@@ -16,6 +16,7 @@
 #include "d/d_debug_viewer.h"
 #include "d/d_demo.h"
 #include "d/d_s_play.h"
+#include "dusk/live_bg.hpp"
 #include "f_op/f_op_camera.h"
 #include "m_Do/m_Do_controller_pad.h"
 #include "m_Do/m_Do_graphic.h"
@@ -1053,7 +1054,7 @@ void dCamera_c::debugDrawInit() {
 bool dCamera_c::Run() {
 #if TARGET_PC
     ResetView();
-    if (executeDebugFlyCam()) {
+    if (executeDebugFlyCam() || dusk::live_bg::operate_camera(this)) {
         mFrameCounter++;
         mTicks++;
         return true;

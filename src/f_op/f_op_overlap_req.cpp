@@ -8,6 +8,7 @@
 #include "f_pc/f_pc_manager.h"
 
 #include "dusk/speedrun.h"
+#include "dusk/live_bg.hpp"
 
 void fopOvlpReq_SetPeektime(overlap_request_class*, u16);
 
@@ -27,6 +28,8 @@ static int fopOvlpReq_phase_Done(overlap_request_class* i_overlapReq) {
                 dusk::m_speedrunInfo.m_loadStartTimestamp = OSGetTime();
             }
         }
+
+        dusk::live_bg::run_scene_ready_hook();
         #endif
         return cPhs_NEXT_e;
     }

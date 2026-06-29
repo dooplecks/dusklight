@@ -17,6 +17,7 @@
 #include "d/d_meter_HIO.h"
 #include "d/d_simple_model.h"
 #include "d/d_timer.h"
+#include "dusk/live_bg.hpp"
 #include "f_op/f_op_msg_mng.h"
 #include "f_op/f_op_scene_mng.h"
 #include "m_Do/m_Do_MemCard.h"
@@ -1213,7 +1214,11 @@ GXColor g_blackColor = {0, 0, 0, 255};
 
 int dComIfG_changeOpeningScene(scene_class* i_scene, s16 i_procName) {
     dComIfGp_offEnableNextStage();
-    dComIfGp_setNextStage("F_SP102", 100, 0, 10);
+    
+    IF_DUSK_BLOCK(!dusk::live_bg::run_opening_scene_hook())
+        dComIfGp_setNextStage("F_SP102", 100, 0, 10);
+    IF_DUSK_BLOCK_END
+
     mDoAud_setSceneName(dComIfGp_getNextStageName(), dComIfGp_getNextStageRoomNo(),
                         dComIfGp_getNextStageLayer());
     dComIfGs_setRestartRoomParam(0);

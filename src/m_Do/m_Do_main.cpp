@@ -28,6 +28,7 @@
 #include "d/d_s_logo.h"
 #include "d/d_s_menu.h"
 #include "d/d_s_play.h"
+#include "dusk/live_bg.hpp"
 #include "dusk/time.h"
 #include "f_ap/f_ap_game.h"
 #include "f_op/f_op_msg.h"
@@ -239,6 +240,7 @@ void main01(void) {
     OSReport("Entering Main Loop (main01)...\n");
 
     dusk::game_clock::ensure_initialized();
+    dusk::live_bg::init();
 
     do {
         // 1. Update Window Events

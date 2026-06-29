@@ -37,6 +37,7 @@
 #include "d/actor/d_a_tag_mmsg.h"
 #include "d/actor/d_a_tag_lantern.h"
 #include "d/actor/d_a_horse.h"
+#include "dusk/live_bg.hpp"
 #include "m_Do/m_Do_controller_pad.h"
 #include "d/d_bomb.h"
 #include "d/d_meter2_info.h"
@@ -4600,6 +4601,9 @@ void daAlink_c::playerInit() {
     int startMode = getStartMode();
     int startEvent = getStartEvent();
 
+    // for live BG, spawn Link without triggering a demo event
+    IF_DUSK_BLOCK(!dusk::live_bg::is_active())
+
     if (dComIfGp_getStartStagePoint() == -2 || dComIfGp_getStartStagePoint() == -3) {
         mStartEventID = dComIfGp_evmng_startDemo(-1);
     } else if (dComIfGp_getStartStagePoint() == -4) {
@@ -4641,6 +4645,8 @@ void daAlink_c::playerInit() {
     }
 
     dComIfGp_getPEvtManager()->orderStartDemo();
+    IF_DUSK_BLOCK_END
+
     field_0x2f94 = -1;
     field_0x2f95 = -1;
     field_0x2f96 = -1;
